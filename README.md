@@ -10,6 +10,26 @@ duplicados. Este diseño evita por completo los conflictos de Git.
 
 ---
 
+## ⚠️ Disclaimer / Aviso importante
+
+> **Los datos de este repositorio provienen de capturas de pantalla de redes sociales y
+> fueron extraídos automáticamente mediante inteligencia artificial (OCR con Google
+> Gemini).**
+>
+> En consecuencia:
+> - La información **puede contener errores, omisiones o imprecisiones** (nombres mal
+>   leídos, cédulas incompletas, edades equivocadas, duplicados no detectados, etc.).
+> - **NO es una fuente oficial** ni un registro médico o gubernamental verificado.
+> - Debe **contrastarse con fuentes confirmadas** antes de usarse para localizar personas,
+>   tomar decisiones médicas, logísticas o de cualquier tipo crítico.
+> - Se publica con fines de **apoyo humanitario y coordinación de emergencia**, sin
+>   garantía de exactitud ni completitud.
+>
+> Al usar o contribuir a este proyecto, entiendes y aceptas estas limitaciones. Trata los
+> datos de personas con la **confidencialidad y el cuidado** que merecen.
+
+---
+
 ## 📑 Tabla de contenido
 - [Cómo funciona (resumen)](#-cómo-funciona-resumen)
 - [Requisitos](#-requisitos)
