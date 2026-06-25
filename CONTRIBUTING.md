@@ -1,41 +1,36 @@
 # 🤝 Guía rápida para colaboradores
 
-Gracias por ayudar a digitalizar las listas de heridos. Sigue estos pasos **una sola vez**
-para instalar, y luego el flujo diario es muy corto.
+Gracias por ayudar a digitalizar las listas de heridos. Procesarás capturas con la app y
+le enviarás tu archivo de datos al **coordinador** por el canal privado del equipo.
 
-> ⚠️ **Recuerda:** los datos provienen de capturas de redes sociales y los lee una IA, así
-> que pueden tener errores. No es una fuente oficial. Trata la información de las personas
-> con cuidado y confidencialidad. (Ver disclaimer completo en el [README](README.md).)
+> 🔒 **MUY IMPORTANTE — privacidad:** Los datos de los pacientes (nombres, cédulas,
+> ubicaciones, y datos de **menores**) son **información sensible**. **NUNCA** los subas a
+> GitHub ni a ningún sitio público. Solo se comparten por el **canal privado** que indique
+> el coordinador (ej. grupo cerrado / Drive con permisos).
+
+> ⚠️ Los datos provienen de capturas de redes sociales y los lee una IA: pueden tener
+> errores y **no son una fuente oficial**. (Disclaimer completo en el [README](README.md).)
 
 ---
 
 ## ✅ Lo que necesitas
 
 - **Python 3.10+** instalado.
-- **Git** instalado.
-- Una **clave gratuita de Gemini**: entra a https://aistudio.google.com/apikey con tu
-  cuenta de Google → "Crear clave de API" → cópiala. (No necesita tarjeta ni Google Cloud.)
-- Que el coordinador te haya dado **acceso al repositorio**.
+- **Git** instalado (solo para descargar el código).
+- Una **clave gratuita de Gemini**: https://aistudio.google.com/apikey → "Crear clave de
+  API" → cópiala. (No necesita tarjeta ni Google Cloud.)
+- El **link del canal privado** del equipo para enviar tu CSV (pídeselo al coordinador).
 
 ---
 
 ## 🛠️ Instalación (solo la primera vez)
 
-Como este es un repositorio **público**, contribuyes con el modelo **Fork + Pull Request**.
-No necesitas invitación: cualquiera puede unirse.
-
 ```bash
-# 1. Haz FORK del repo desde la web de GitHub (botón "Fork" arriba a la derecha).
-#    Eso crea una copia tuya en https://github.com/TU_USUARIO/REPO
+# 1. Descarga el código
+git clone https://github.com/ricdjulio/ConsolidadoHeridosVZLA2026.git
+cd ConsolidadoHeridosVZLA2026
 
-# 2. Clona TU fork (ojo: tu usuario, no el original)
-git clone https://github.com/TU_USUARIO/REPO.git
-cd REPO
-
-# 3. Conecta el repo original como "upstream" para poder actualizar después
-git remote add upstream https://github.com/USUARIO_ORIGINAL/REPO.git
-
-# 4. Crea el entorno e instala dependencias
+# 2. Crea el entorno e instala dependencias
 python3 -m venv venv
 ./venv/bin/pip install -r requirements.txt
 ```
@@ -46,9 +41,9 @@ python3 -m venv venv
 
 ## ▶️ Cada vez que vayas a cargar datos
 
-### 1. Actualiza tu fork con los últimos datos
+### 1. Actualiza el código (por si hubo mejoras)
 ```bash
-git pull upstream main
+git pull
 ```
 
 ### 2. Arranca la app (pon TU nombre en COLABORADOR)
@@ -58,27 +53,18 @@ export COLABORADOR="tunombre"          # ej: maria  (¡usa siempre el mismo!)
 ./venv/bin/python app.py
 ```
 
-### 3. Abre la app y procesa fotos
+### 3. Procesa las capturas
 - En la computadora: http://localhost:5000
 - Desde el **móvil** (misma WiFi que la PC): `http://IP_DE_LA_PC:5000`
 - Toca la zona roja → elige la captura → (opcional) escribe la ubicación por defecto →
   **Procesar y Subir**. Repite con todas tus capturas.
 
-### 4. Sube SOLO tu archivo a tu fork
-```bash
-git add datos/heridos_tunombre.csv
-git commit -m "datos: tunombre +N pacientes"
-git push origin main
-```
+### 4. Descarga tu CSV y envíalo al coordinador
+- Pulsa el botón verde **⬇️ Descargar mi CSV**.
+- Envía ese archivo (`heridos_tunombre.csv`) al **coordinador** por el **canal privado**.
+- El coordinador lo junta con los demás y genera el consolidado.
 
-### 5. Abre un Pull Request
-- Ve a tu fork en GitHub: te saldrá un botón **"Compare & pull request"** → púlsalo →
-  **"Create pull request"**.
-- O por terminal, si tienes GitHub CLI: `gh pr create --fill`
-- El coordinador lo revisará y lo aprobará. Como solo tocaste **tu** archivo, se aprueba
-  sin conflictos. 🎉
-
-> La próxima vez solo repites los pasos 1→5. ¡Gracias!
+¡Y listo! 🎉
 
 ---
 
@@ -86,14 +72,13 @@ git push origin main
 
 | ✅ Haz esto | ❌ No hagas esto |
 |---|---|
-| Usa **siempre el mismo** `COLABORADOR` (tu nombre) | Cambiar tu nombre cada vez (creas archivos sueltos) |
-| `git pull` **antes** de empezar | Trabajar sin actualizar primero |
-| Sube **solo tu** `datos/heridos_tunombre.csv` | Editar el CSV de otra persona |
-| Guardar tu API key solo en tu PC | Subir tu API key al repo (`.env`, `api,txt`, etc.) |
-| Dejar que el **coordinador** consolide el Excel | Generar/subir `heridos_consolidado.xlsx` tú mismo |
+| Usa **siempre el mismo** `COLABORADOR` (tu nombre) | Cambiar tu nombre cada vez |
+| Enviar tu CSV por el **canal privado** | **Subir datos de pacientes a GitHub** o redes |
+| Guardar tu API key solo en tu PC | Subir tu API key (`.env`, `api,txt`) a ningún lado |
+| Borrar las capturas cuando ya no las necesites | Difundir las capturas o los datos públicamente |
 
-> **¿Por qué cada quien su archivo?** Así nunca chocan dos personas en Git y `git push`
-> siempre funciona sin conflictos.
+> El repositorio es **solo el código**. Los **datos nunca** van al repo: el `.gitignore` ya
+> los bloquea, pero por seguridad nunca fuerces su subida.
 
 ---
 
@@ -105,6 +90,5 @@ git push origin main
 | `Cliente Gemini no disponible` | Te faltó `export GEMINI_API_KEY=...` en esa terminal. |
 | `error 404 ... gemini ...` | Avisa al coordinador (hay que actualizar el modelo). |
 | El móvil no abre la página | Deben estar en la **misma WiFi**; revisa el firewall de la PC. |
-| `git push` da error de conflicto | Casi seguro tocaste otro archivo. Avisa al coordinador. |
 
-Ante cualquier duda, escribe al coordinador del proyecto. ¡Gracias por colaborar! 🙏
+Ante cualquier duda, escribe al coordinador. ¡Gracias por colaborar! 🙏

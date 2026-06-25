@@ -48,16 +48,18 @@ duplicados. Este diseño evita por completo los conflictos de Git.
 ## 🔎 Cómo funciona (resumen)
 
 ```
- Foto de la lista  ──►  Gemini (OCR)  ──►  datos/heridos_TUNOMBRE.csv  (commit tuyo)
+ Foto de la lista  ──►  Gemini (OCR)  ──►  datos/heridos_TUNOMBRE.csv
                                                       │
-              (varios colaboradores, cada uno su CSV) │
-                                                      ▼
+                                    (cada colaborador │ envía su CSV
+                                     por canal PRIVADO ▼ al coordinador)
                               python consolidar.py  ──►  heridos_consolidado.xlsx
+                                                         (se comparte por canal privado)
 ```
 
 - **Anti-duplicados:** la cédula es la clave única. Si una persona no tiene cédula
   legible, se usa `TEMP_NOMBRE_APELLIDO_EDAD`. Reprocesar la misma foto **no duplica**.
-- Cada colaborador trabaja en **su propio archivo** → nunca chocan en Git.
+- Cada colaborador trabaja en **su propio archivo**; el coordinador los une al consolidar.
+- 🔒 **Los datos de pacientes nunca se suben a GitHub** (solo el código es público).
 
 ---
 
@@ -143,48 +145,65 @@ El móvil debe estar en la **misma red WiFi** que la computadora que corre la ap
 
 ---
 
-## 🤝 Cómo colaborar (repositorio público)
+## 🤝 Cómo colaborar
 
-Este repo es **público**: cualquiera puede unirse, **sin invitación**. Se contribuye con el
-modelo estándar **Fork + Pull Request**. Los pasos detallados están en
-**[CONTRIBUTING.md](CONTRIBUTING.md)**; en resumen:
+El **código** es público para que cualquiera pueda usar y mejorar la app. Pero los
+**datos de pacientes NO van al repositorio** (ver [Privacidad](#-privacidad-importante)).
+El flujo es:
 
-1. **Fork** del repo (botón en GitHub) y clona tu fork.
-2. Arranca la app con **tu** `COLABORADOR` (tu nombre) y procesa fotos.
-3. Sube **solo tu** `datos/heridos_<tunombre>.csv` a tu fork.
-4. Abre un **Pull Request**. El coordinador lo aprueba.
+1. El colaborador **clona el código**, arranca la app con **su** `COLABORADOR` (su nombre)
+   y procesa capturas.
+2. Pulsa **⬇️ Descargar mi CSV** y se lo **envía al coordinador por un canal privado**
+   (grupo cerrado / Drive con permisos), **no por GitHub**.
+3. El **coordinador** junta todos los CSV recibidos en su carpeta `datos/`, ejecuta
+   [`consolidar.py`](#-consolidar-el-excel-final) y comparte el Excel final por el mismo
+   canal privado.
+
+Los pasos detallados para colaboradores están en **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
 ### ✅ Reglas de oro
 - **Cada colaborador usa un `COLABORADOR` único** (su nombre) → su propio archivo.
-- **Solo tocas tu archivo** `datos/heridos_<tunombre>.csv`; nunca el de otro.
+- **Los datos de pacientes NUNCA se suben a GitHub** ni a redes. Solo por canal privado.
 - **Nunca** subas tu **API key** (`api,txt`, `.env`) ni la carpeta `venv/` (ya en `.gitignore`).
-- No generes ni subas `heridos_consolidado.xlsx`: eso lo hace el **coordinador**.
-
-> **¿Por qué un archivo por persona?** Git no sabe fusionar dos cambios en el mismo
-> archivo. Con un CSV por persona, dos colaboradores **nunca tocan el mismo archivo**, así
-> que los Pull Requests **se aprueban sin conflictos**.
 
 ### 🧭 Rol del coordinador
-- Revisa y **mergea los Pull Requests** que llegan (rápidos: cada uno toca un solo archivo).
-- Periódicamente ejecuta la [consolidación](#-consolidar-el-excel-final) para generar el
-  Excel final.
-- Para gente de confianza, puede darles acceso de escritura (Settings → Collaborators) y
-  así saltarse los PRs.
+1. Recibe los CSV de los colaboradores y los coloca en su carpeta local `datos/`
+   (un archivo por persona, p.ej. `datos/heridos_maria.csv`).
+2. Ejecuta `./venv/bin/python consolidar.py` para generar el Excel sin duplicados.
+3. Comparte `heridos_consolidado.xlsx` por el **canal privado** del equipo.
+
+> **¿Por qué un archivo por persona?** Mantiene los datos de cada quien separados y el
+> dedup global (por cédula) se hace al consolidar, sin pisarse entre colaboradores.
+
+---
+
+## 🔒 Privacidad (IMPORTANTE)
+
+Este proyecto maneja **datos personales sensibles** de personas heridas, incluyendo
+**menores de edad**: nombres, cédulas, edades y ubicaciones.
+
+- **Los datos NO se publican en GitHub.** El repositorio contiene **solo el código**. El
+  `.gitignore` bloquea `datos/*.csv` y `heridos_consolidado.*` para evitar subidas
+  accidentales.
+- Comparte los datos **solo** por canales privados y con personas autorizadas.
+- Borra las capturas de origen cuando ya no se necesiten.
+- Trata esta información con la confidencialidad que merece. Ante la duda, **no publiques**.
 
 ---
 
 ## 📊 Consolidar el Excel final
 
-> **¿Quién consolida?** Una sola persona designada como **coordinador**. Si varios
-> generan y suben el consolidado a la vez, volverían los conflictos binarios. Por eso
-> **solo el coordinador** ejecuta este paso y comparte el resultado.
+> **¿Quién consolida?** Una sola persona designada como **coordinador**, que reúne los CSV
+> que le envían los colaboradores por el canal privado.
 
-El coordinador hace:
+El coordinador:
 
-```bash
-git pull                       # traer todos los CSV actualizados
-./venv/bin/python consolidar.py
-```
+1. Coloca los CSV recibidos en su carpeta local `datos/` (uno por persona, p.ej.
+   `datos/heridos_maria.csv`, `datos/heridos_jose.csv`...).
+2. Ejecuta:
+   ```bash
+   ./venv/bin/python consolidar.py
+   ```
 
 Esto lee **todos** los `datos/heridos_*.csv`, elimina duplicados globalmente
 (conservando el registro más completo) y genera:
@@ -192,10 +211,8 @@ Esto lee **todos** los `datos/heridos_*.csv`, elimina duplicados globalmente
 - `heridos_consolidado.xlsx` — el Excel final.
 - `heridos_consolidado.csv` — versión en texto.
 
-Por defecto estos dos archivos están en `.gitignore` (son artefactos generados). El
-coordinador los comparte por el canal que prefiera (Drive, WhatsApp, etc.). Si prefieres
-que el Excel **viva en el repo**, borra esas dos líneas del `.gitignore`; recuerda que
-entonces **solo el coordinador** debe commitearlo para evitar conflictos.
+> 🔒 Estos archivos están en `.gitignore` y **no se suben al repo** (contienen datos
+> sensibles). El coordinador los comparte **solo por el canal privado** del equipo.
 
 ---
 

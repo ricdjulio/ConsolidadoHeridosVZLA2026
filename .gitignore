@@ -21,6 +21,11 @@ __pycache__/
 heridos.xlsx
 *.tmp
 
-# === Artefactos generados por consolidar.py ===
-# Se versionan en el repo (es el "Consolidado" que se comparte).
-# IMPORTANTE: solo el COORDINADOR los regenera y commitea, para evitar conflictos.
+# =====================================================================
+# DATOS DE PACIENTES — NUNCA se suben al repo público (info sensible)
+# Se comparten por un canal privado (Drive/grupo cerrado), no por GitHub.
+# =====================================================================
+datos/*.csv
+!datos/.gitkeep
+heridos_consolidado.xlsx
+heridos_consolidado.csv
