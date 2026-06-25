@@ -1,0 +1,28 @@
+# === SECRETOS: NUNCA subir la API key ===
+api,txt
+api.txt
+*.key
+.env
+.env.*
+credentials.json
+
+# === Entorno virtual de Python ===
+venv/
+.venv/
+env/
+
+# === Cache de Python ===
+__pycache__/
+*.pyc
+*.pyo
+
+# === Archivos locales / temporales ===
+.DS_Store
+heridos.xlsx
+*.tmp
+
+# === Artefactos generados por consolidar.py ===
+# Los genera el coordinador; se comparten por otra vía o los regenera quien los necesite.
+# Si prefieres versionarlos, borra estas dos líneas (solo el coordinador debe commitearlos).
+heridos_consolidado.xlsx
+heridos_consolidado.csv

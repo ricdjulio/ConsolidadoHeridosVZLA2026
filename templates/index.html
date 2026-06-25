@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Triaje de Emergencia · Registro de Heridos</title>
+  <style>
+    :root {
+      --rojo: #d32f2f;
+      --rojo-osc: #9a0007;
+      --verde: #2e7d32;
+      --gris: #f4f5f7;
+      --texto: #1a1a1a;
+      --borde: #d0d3d8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--gris);
+      color: var(--texto);
+      padding: 16px;
+    }
+    .wrap { max-width: 560px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    header h1 {
+      font-size: 1.35rem;
+      margin: 0;
+      color: var(--rojo-osc);
+    }
+    header p { margin: 4px 0 0; font-size: .85rem; color: #555; }
+    header .colab { margin-top: 6px; font-size: .8rem; color: #777; }
+    header .colab strong { color: var(--rojo-osc); }
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      margin-bottom: 16px;
+    }
+    label { font-weight: 600; font-size: .9rem; display: block; margin-bottom: 6px; }
+    .dropzone {
+      border: 2px dashed var(--borde);
+      border-radius: 12px;
+      padding: 28px 16px;
+      text-align: center;
+      color: #666;
+      cursor: pointer;
+      transition: .15s;
+      background: #fafbfc;
+    }
+    .dropzone.drag { border-color: var(--rojo); background: #fff5f5; color: var(--rojo); }
+    .dropzone strong { color: var(--rojo); }
+    .dropzone .sub { font-size: .8rem; color: #999; }
+    .dropzone p { margin: 0; line-height: 1.5; }
+    #preview { max-width: 100%; margin-top: 12px; border-radius: 10px; display: none; }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      margin-bottom: 4px;
+    }
+    .hint { font-size: .78rem; color: #888; margin: 2px 0 0; }
+    button {
+      width: 100%;
+      padding: 18px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--rojo);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    button:active { background: var(--rojo-osc); }
+    button:disabled { background: #bbb; cursor: not-allowed; }
+    #status {
+      text-align: center;
+      font-weight: 600;
+      margin: 12px 0;
+      min-height: 22px;
+    }
+    .ok { color: var(--verde); }
+    .err { color: var(--rojo); }
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 3px solid #ddd; border-top-color: var(--rojo);
+      border-radius: 50%; animation: spin .8s linear infinite;
+      vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #eee; }
+    th { background: #fafafa; font-size: .72rem; text-transform: uppercase; color: #777; }
+    .sindatos { color: #b71c1c; font-style: italic; }
+    .vacio { text-align: center; color: #999; padding: 20px 0; }
+    .descargar {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--verde);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .descargar:active { opacity: .85; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🆘 Triaje de Emergencia</h1>
+      <p>Captura la lista de heridos y se registra en tiempo real</p>
+      <p class="colab">Colaborador: <strong>{{ colaborador }}</strong></p>
+    </header>
+
+    <form id="form" class="card">
+      <label>1 · Captura / Foto de la lista</label>
+      <label class="dropzone" id="dropzone" for="imagen">
+        <p>📷 Toca para elegir captura/foto <br><span class="sub">(galería, archivos o cámara)</span></p>
+        <img id="preview" alt="vista previa" />
+      </label>
+      <input type="file" id="imagen" name="imagen" accept="image/*" hidden />
+
+      <div style="height:14px"></div>
+
+      <label for="ubicacion">2 · Procedencia / Ubicación por defecto</label>
+      <input type="text" id="ubicacion" name="ubicacion" placeholder="Ej: La Guaira" />
+      <p class="hint">Se aplica solo si la lista física no indica una ubicación.</p>
+
+      <button type="submit" id="btn">⬆️ Procesar y Subir</button>
+    </form>
+
+    <div id="status"></div>
+
+    <div class="card">
+      <label>Pacientes extraídos (última imagen)</label>
+      <div id="resultado">
+        <p class="vacio">Aún no se ha procesado ninguna imagen.</p>
+      </div>
+    </div>
+
+    <a href="/descargar" id="descargar" class="descargar">⬇️ Descargar mi CSV</a>
+  </div>
+
+  <script>
+    const dropzone = document.getElementById("dropzone");
+    const inputImg = document.getElementById("imagen");
+    const preview = document.getElementById("preview");
+    const form = document.getElementById("form");
+    const btn = document.getElementById("btn");
+    const status = document.getElementById("status");
+    const resultado = document.getElementById("resultado");
+
+    inputImg.addEventListener("change", () => showPreview(inputImg.files[0]));
+
+    ["dragover", "dragenter"].forEach(ev =>
+      dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add("drag"); })
+    );
+    ["dragleave", "drop"].forEach(ev =>
+      dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove("drag"); })
+    );
+    dropzone.addEventListener("drop", e => {
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        inputImg.files = dt.files;
+        showPreview(file);
+      }
+    });
+
+    function showPreview(file) {
+      if (!file) return;
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+    }
+
+    function esc(s) {
+      return String(s ?? "").replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+    }
+
+    function cell(val) {
+      const v = esc(val);
+      return (val === "SIN DATOS") ? `<span class="sindatos">SIN DATOS</span>` : v;
+    }
+
+    function render(pacientes) {
+      if (!pacientes || !pacientes.length) {
+        resultado.innerHTML = `<p class="vacio">No se detectaron pacientes legibles.</p>`;
+        return;
+      }
+      let html = `<table><thead><tr>
+        <th>Nombre</th><th>Apellido</th><th>Edad</th><th>Cédula</th><th>Ubicación</th>
+        </tr></thead><tbody>`;
+      for (const p of pacientes) {
+        html += `<tr>
+          <td>${cell(p.nombre)}</td>
+          <td>${cell(p.apellido)}</td>
+          <td>${cell(p.edad)}</td>
+          <td>${cell(p.cedula_id)}</td>
+          <td>${cell(p.ubicacion)}</td>
+        </tr>`;
+      }
+      html += `</tbody></table>`;
+      resultado.innerHTML = html;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!inputImg.files.length) {
+        status.innerHTML = `<span class="err">Selecciona o arrastra una imagen primero.</span>`;
+        return;
+      }
+      btn.disabled = true;
+      status.innerHTML = `<span class="spinner"></span> Procesando imagen con IA...`;
+
+      try {
+        const fd = new FormData(form);
+        const resp = await fetch("/procesar", { method: "POST", body: fd });
+        const data = await resp.json();
+
+        if (data.ok) {
+          status.innerHTML = `<span class="ok">✅ ${esc(data.mensaje || "Listo")}</span>`;
+          render(data.pacientes);
+        } else {
+          status.innerHTML = `<span class="err">⚠️ ${esc(data.error || "Error")}</span>`;
+          if (data.pacientes) render(data.pacientes);
+        }
+      } catch (err) {
+        status.innerHTML = `<span class="err">⚠️ Error de conexión: ${esc(err.message)}</span>`;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
