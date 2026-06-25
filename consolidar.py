@@ -53,8 +53,7 @@ def completeness(p):
 def main():
     archivos = sorted(glob.glob(os.path.join(DATA_DIR, "heridos_*.csv")))
     if not archivos:
-        print(f"No se encontraron CSV en '{DATA_DIR}/'. Nada que consolidar.")
-        return
+        print(f"No se encontraron CSV en '{DATA_DIR}/'. Genero un consolidado vacío.")
 
     consolidado = {}   # clave -> {fila..., "fuente": colaborador}
     total_leidos = 0

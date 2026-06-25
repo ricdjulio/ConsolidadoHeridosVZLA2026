@@ -22,7 +22,5 @@ heridos.xlsx
 *.tmp
 
 # === Artefactos generados por consolidar.py ===
-# Los genera el coordinador; se comparten por otra vía o los regenera quien los necesite.
-# Si prefieres versionarlos, borra estas dos líneas (solo el coordinador debe commitearlos).
-heridos_consolidado.xlsx
-heridos_consolidado.csv
+# Se versionan en el repo (es el "Consolidado" que se comparte).
+# IMPORTANTE: solo el COORDINADOR los regenera y commitea, para evitar conflictos.
