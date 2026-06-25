@@ -143,33 +143,33 @@ El móvil debe estar en la **misma red WiFi** que la computadora que corre la ap
 
 ---
 
-## 🤝 Reglas para colaborar en GitHub (IMPORTANTE)
+## 🤝 Cómo colaborar (repositorio público)
 
-El sistema está diseñado para que **nunca haya conflictos**, pero hay que respetar estas reglas:
+Este repo es **público**: cualquiera puede unirse, **sin invitación**. Se contribuye con el
+modelo estándar **Fork + Pull Request**. Los pasos detallados están en
+**[CONTRIBUTING.md](CONTRIBUTING.md)**; en resumen:
 
-### ✅ SÍ
-1. **Cada colaborador usa un `COLABORADOR` único** (su nombre). Tu archivo es
-   `datos/heridos_<tunombre>.csv` y **solo tú lo tocas**.
-2. **Antes de empezar a trabajar**, actualiza el repo:
-   ```bash
-   git pull
-   ```
-3. **Al terminar tu tanda** (o cada cierto rato), sube SOLO tu archivo:
-   ```bash
-   git add datos/heridos_<tunombre>.csv
-   git commit -m "datos: <tunombre> +N pacientes (zona X)"
-   git push
-   ```
+1. **Fork** del repo (botón en GitHub) y clona tu fork.
+2. Arranca la app con **tu** `COLABORADOR` (tu nombre) y procesa fotos.
+3. Sube **solo tu** `datos/heridos_<tunombre>.csv` a tu fork.
+4. Abre un **Pull Request**. El coordinador lo aprueba.
 
-### ❌ NO
-- ❌ No edites el CSV de **otro** colaborador.
-- ❌ No subas tu **API key** (`api,txt`, `.env`, etc.). Ya están en `.gitignore`.
-- ❌ No subas la carpeta `venv/`.
-- ❌ No commitees `heridos_consolidado.xlsx` salvo que seas el **coordinador** (ver abajo).
+### ✅ Reglas de oro
+- **Cada colaborador usa un `COLABORADOR` único** (su nombre) → su propio archivo.
+- **Solo tocas tu archivo** `datos/heridos_<tunombre>.csv`; nunca el de otro.
+- **Nunca** subas tu **API key** (`api,txt`, `.env`) ni la carpeta `venv/` (ya en `.gitignore`).
+- No generes ni subas `heridos_consolidado.xlsx`: eso lo hace el **coordinador**.
 
 > **¿Por qué un archivo por persona?** Git no sabe fusionar dos cambios en el mismo
-> archivo binario/Excel. Con un CSV por persona, dos colaboradores **nunca tocan el mismo
-> archivo**, así que `git pull` y `git push` siempre funcionan sin conflictos.
+> archivo. Con un CSV por persona, dos colaboradores **nunca tocan el mismo archivo**, así
+> que los Pull Requests **se aprueban sin conflictos**.
+
+### 🧭 Rol del coordinador
+- Revisa y **mergea los Pull Requests** que llegan (rápidos: cada uno toca un solo archivo).
+- Periódicamente ejecuta la [consolidación](#-consolidar-el-excel-final) para generar el
+  Excel final.
+- Para gente de confianza, puede darles acceso de escritura (Settings → Collaborators) y
+  así saltarse los PRs.
 
 ---
 

@@ -21,12 +21,21 @@ para instalar, y luego el flujo diario es muy corto.
 
 ## 🛠️ Instalación (solo la primera vez)
 
+Como este es un repositorio **público**, contribuyes con el modelo **Fork + Pull Request**.
+No necesitas invitación: cualquiera puede unirse.
+
 ```bash
-# 1. Clona el repo (pídele la URL al coordinador)
-git clone https://github.com/USUARIO/REPO.git
+# 1. Haz FORK del repo desde la web de GitHub (botón "Fork" arriba a la derecha).
+#    Eso crea una copia tuya en https://github.com/TU_USUARIO/REPO
+
+# 2. Clona TU fork (ojo: tu usuario, no el original)
+git clone https://github.com/TU_USUARIO/REPO.git
 cd REPO
 
-# 2. Crea el entorno e instala dependencias
+# 3. Conecta el repo original como "upstream" para poder actualizar después
+git remote add upstream https://github.com/USUARIO_ORIGINAL/REPO.git
+
+# 4. Crea el entorno e instala dependencias
 python3 -m venv venv
 ./venv/bin/pip install -r requirements.txt
 ```
@@ -37,9 +46,9 @@ python3 -m venv venv
 
 ## ▶️ Cada vez que vayas a cargar datos
 
-### 1. Actualiza el repo
+### 1. Actualiza tu fork con los últimos datos
 ```bash
-git pull
+git pull upstream main
 ```
 
 ### 2. Arranca la app (pon TU nombre en COLABORADOR)
@@ -55,14 +64,21 @@ export COLABORADOR="tunombre"          # ej: maria  (¡usa siempre el mismo!)
 - Toca la zona roja → elige la captura → (opcional) escribe la ubicación por defecto →
   **Procesar y Subir**. Repite con todas tus capturas.
 
-### 4. Sube SOLO tu archivo cuando termines
+### 4. Sube SOLO tu archivo a tu fork
 ```bash
 git add datos/heridos_tunombre.csv
 git commit -m "datos: tunombre +N pacientes"
-git push
+git push origin main
 ```
 
-¡Y listo! 🎉
+### 5. Abre un Pull Request
+- Ve a tu fork en GitHub: te saldrá un botón **"Compare & pull request"** → púlsalo →
+  **"Create pull request"**.
+- O por terminal, si tienes GitHub CLI: `gh pr create --fill`
+- El coordinador lo revisará y lo aprobará. Como solo tocaste **tu** archivo, se aprueba
+  sin conflictos. 🎉
+
+> La próxima vez solo repites los pasos 1→5. ¡Gracias!
 
 ---
 
